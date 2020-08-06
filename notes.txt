@@ -1,0 +1,134 @@
+Docker Client
+(Docker CLI) - Tool that we are going to issue commands to
+
+Docker Server- Tool that is responsible for creating images, running containers,
+		etc
+(Docker Daemon)
+
+
+command docker - reference the Docker Client
+
+
+Namespacing - Isolating resources per process
+(or group of processes)
+
+Control Groups(cgroups)- Limit amout of resources used per
+process
+
+Namespace + control group => Container
+docker ps - list all the different running containers that are currently on your machine
+
+Lifecycle of container
+- Creating and Running a Container from an image
+
+docker run = docker create(creating container) + docker start(execute startup command)
+
+container exited doensn't mean cannot be used again
+it could be started again
+
+docker start <container id> 로 재시작 가능.
+하지만 -a 옵션 주어야 output 출력
+
+docker exec -it <container Id> <command>
+
+-it = -i + -t 
+"i" means put the stuff into STDIN
+"t" means that makes all this text show up a little bit pretty
+
+docker exec -it <container id> sh - 해당 컨테이너 shell로 들어가기
+sh - name of a promgram which is being executed inside that container
+- command processor or a shell
+
+between two containers they do not automatically share thier file system.
+
+장점이라고 말하면
+우선 배포 후에 수정하기가 쉽다.(이미지화 해서 배포 하면 되므로)
+
+<Customizing Docker Image>
+
+Dockerfile - Docker Client - Docker Server - Usable Image
+
+Dockerfile - Configuration to define how our container should behave.
+
+
+<Creating a Dockerfile>
+Specify a base image
+Run some commands to install additional programs
+Specify a command to run on container startup
+
+Instruction telling
+Docker Server 			Argument to the instruction
+What to do
+
+FROM				alpine
+RUN				apk add --update redis
+CMD				["redis-server"]
+
+# 알파인 리눅스(Alpine Linux)
+
+- 알파인 리눅스는 가볍고 간단한, 보안성을 목적으로 개발한 리눅스 배포판.
+- 용량이 80M인 초경량화된 배포판
+- 도커에 채택되어 5M 크기의 리눅스 이미지로 유명.
+
+# apk - 패키지 관리자
+알파인의 패키지 관리자 명령어는 apk 이다.
+
+'FROM' - specify the dock or image that we want to use as a base
+'RUN' - used to execute some command while we are preparing our custom image
+'CMD' - specifies what should be executed when our images used to start up a brand new
+container.
+
+# Tagging an Image
+docker build -t stephengrider/redis:latest(Tags the image) .
+. -> Specifies the directory of files/folders to use for the build
+
+-addvantage of tagging
+=>  makes it a lot easier to refer to it by a name that you and i can customize
+
+# Tag Convention
+jay	 		/ redis	 		: latest
+(your docker ID)	(Repo/Project name)	(version)	
+
+
+FROM image
+- 이 안에서 기존 로컬 하드디스크에 있는 파일을
+사용 할 수 없음( 당연)
+- 그래서 로컬에 있는 사용할 파일혹은 디렉토리들을 명시 해주어야 함
+
+COPY
+-a command
+
+Usage of 'COPY'
+
+COPY ./(1)어떤파일	./(2) 어디에
+
+(1) Path to folder to copy from
+    on your machine relative to build context
+
+(2) Place to copy stuff to inside the container 
+
+local file system -> container
+
+<About port>
+Container essentially has its own isolated set of ports that
+can receive traffic.
+
+Url을 통한 접근 -> 원래 localhost로 들어감
+
+컨테이너 내부의 포트로 mapping을 시켜 주어야 한다.
+(a request to a given port on your local network take
+that request in automatically forward it to some port inside the container)
+
+<Docker Run with Port Mapping >
+docker run -p 8080(1) : 8080(2) <image id or name>
+
+(1): Route incoming requests to this port on localhost to..
+(2): this port inside the container
+
+<WORKDIR>
+
+WORKDIR /path
+	(Any following command will be executed relative to this path in the container)
+
+- If this folder does not exist inside the container, it will be automatically
+  created for us
