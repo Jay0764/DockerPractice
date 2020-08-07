@@ -132,3 +132,68 @@ WORKDIR /path
 
 - If this folder does not exist inside the container, it will be automatically
   created for us
+
+  <Docker Compose>
+
+Separate CLI that gets installed along with Docker
+
+Used to start up multiple Docker containers at the same time
+
+Automates some of the long-winded arguments we were passing to 'docker run'
+
+docker-compose.yml => docker-compose CLI
+-> Contains all the options we'd normally pass to docker-cli
+
+
+<docker-compose.yml>
+step1.
+version: '3' (it means we are gonna use 'docker-compose' version 3)
+-required
+
+step2. do what you wanna do
+services:
+	redis-server:(with below image, create container of it and that would be called with this tag)
+		image: 'redis'
+(its kind of a type of container)
+
+	node-app:
+		build: .
+		ports:
+			-"4001:8081" (dash means 'array')
+
+docker-compose -자동으로 명시된 컨테이너들을 연결해줌(networking)
+
+다른 컨테이너를 연결하는 방식은 services 내에 있는 service의 이름을 명시해주기만 하면 됨.
+
+purpose of docker-compose => make it easier to run all the different commands you usually run with
+docker
+
+
+# docker-compose 
+
+docker run image => docker-compose up
+
+docker build .
+docker run image  => docker-compose up --build 
+
+docker-compose command
+-> automatically make a newtwork for you that's going to join different containers together.
+
+Reminder for Windows Home / Docker Toolbox Users
+
+Docker Toolbox that we will not be able to use localhost in any of the applications going forward. Instead, we will need to use 192.168.99.100.
+
+# Launch in background
+- docker-compose up -d(daemon)
+
+# Stop Containers
+-docker-compose down
+
+# Restart Policies
+"no" : Never attempt to restart this container if it stops or crashes (with double quotations)
+always: If this container stops for any reason, always attempt to restart it
+on-failure: Only restart if the container stops with an error code except for code 0 => which means
+		we wanna exit the server.
+unless-stopped: Always restart unless we forcibly stop it.
+
+if docker makes the server restarted for any reasons
